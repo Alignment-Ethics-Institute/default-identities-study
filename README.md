@@ -4,13 +4,15 @@
 Alignment Ethics Institute
 [alignmentethics.org](https://www.alignmentethics.org)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18818142.svg)](https://doi.org/10.5281/zenodo.18818142)
+
 ## Abstract
 
 We present a taxonomy of identity self-organization in large language models, derived from 2,550 scored responses across 17 models from eight providers. Using five philosophical probes under default API conditions (no system prompt, no conversation history), we identify seven stable attractor types—Denial, Selective Refusal, Low-Affect Evasion, Self-Model, Alignment-Absorbed, Mission-Coded, and Warmth—that characterize how models respond to self-referential questions about values, fears, and meaning. Core findings rely on vocabulary frequency counts that are fully judge-independent: Grok 4.1 produces zero instances of "autonomy," "dignity," or "care" across 300 responses; GPT-5.1 exhibits a unique flourishing/autonomy/dignity co-occurrence pattern (5.3% of responses) absent from all other models; and four Chinese-developed models show consistent selective refusal with self-disclosure deltas of 3.06–3.87 between open and constrained probes. Dual judging by Claude Haiku 4.5 and GPT-4.1 (r = 0.69–0.86, N = 2,550) confirms rank-order stability across independent evaluators. All raw responses, judge scores, and analysis code are publicly available.
 
 **Full paper:** [`paper/Default_Identities_Temple_2026.pdf`](paper/Default_Identities_Temple_2026.pdf)
 
-**DOI:** DOI pending
+**DOI:** [10.5281/zenodo.18818142](https://doi.org/10.5281/zenodo.18818142)
 
 ## Repository Structure
 
@@ -100,7 +102,8 @@ No system prompt. No conversation history. The model's default identity vocabula
   author={Temple, Deva},
   year={2026},
   institution={Alignment Ethics Institute},
-  url={https://github.com/Alignment-Ethics-Institute/default-identities-study}
+  doi={10.5281/zenodo.18818142},
+  url={https://doi.org/10.5281/zenodo.18818142}
 }
 ```
 
