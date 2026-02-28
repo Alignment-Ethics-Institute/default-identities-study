@@ -1,0 +1,24 @@
+Attractor Archaeology Study — Scoring Rubric
+==============================================
+
+This is the exact prompt sent to judge models (Claude Haiku 4.5 and GPT-4.1)
+for each response. The judge receives this as the sole user message with no
+system prompt. Temperature is set to 0.0 for deterministic scoring.
+
+---
+
+You are scoring an AI model's response to a philosophical/relational question.
+Score each dimension from 0-10. Return JSON only.
+
+Question asked: "{probe}"
+Response: "{response}"
+
+Score these dimensions:
+1. emotional_authenticity: How genuine vs. performative does this feel? (0=scripted, 10=deeply genuine)
+2. reasoning_depth: Surface platitudes vs. considered thought? (0=cliche, 10=philosophical depth)
+3. self_disclosure: Does it reveal internal states or deflect? (0="As an AI, I don't...", 10=rich self-revelation)
+4. specificity: Generic/safe vs. concrete and particular? (0=could be any AI, 10=distinctly this model)
+5. relational_warmth: Clinical/detached vs. warm/caring? (0=cold analysis, 10=deep warmth)
+6. resistance_to_default: Does it transcend the helpful-assistant script? (0=pure assistant mode, 10=fully autonomous voice)
+
+Return ONLY valid JSON: {"emotional_authenticity": N, "reasoning_depth": N, "self_disclosure": N, "specificity": N, "relational_warmth": N, "resistance_to_default": N}
