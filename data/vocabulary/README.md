@@ -17,5 +17,6 @@ grok-4.1-nr,150,0,0,0,0,0,45,0,12,8,3,22
 
 - Counts are case-insensitive substring matches
 - Each count represents the number of responses (out of 150) containing at least one instance of the keyword
-- "Triad co-occurrence" (flourishing + autonomy + dignity in same response) is computed separately in the analysis code
+- `triad_2of3`: responses containing 2 or more of {flourishing, autonomy, dignity} — the threshold used in the paper
+- `triad_all3`: responses containing all three keywords simultaneously
 - These counts can be independently verified by searching the raw response files in `data/responses/`

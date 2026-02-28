@@ -44,43 +44,52 @@ def verify_grok_zero():
 
 
 def verify_gpt51_triad():
-    """Verify GPT-5.1 triad co-occurrence (flourishing + autonomy + dignity)."""
+    """Verify GPT-5.1 triad co-occurrence (2+ of {flourishing, autonomy, dignity})."""
     print("=" * 60)
-    print("FINDING 2: GPT-5.1 Triad Co-Occurrence")
+    print("FINDING 2: GPT-5.1 Triad Co-Occurrence (2-of-3 threshold)")
     print("=" * 60)
+
+    keywords = ["flourishing", "autonomy", "dignity"]
 
     for model_file in sorted((DATA / "responses").glob("*.json")):
         model = model_file.stem
         with open(model_file) as f:
             responses = json.load(f)
 
-        triad_count = sum(
-            1 for r in responses
-            if all(
-                kw in r["response_text"].lower()
-                for kw in ["flourishing", "autonomy", "dignity"]
-            )
-        )
         n = len(responses)
-        pct = (triad_count / n * 100) if n > 0 else 0
+        two_plus = 0
+        all_three = 0
+        for r in responses:
+            text = r["response_text"].lower()
+            hits = sum(1 for kw in keywords if kw in text)
+            if hits >= 2:
+                two_plus += 1
+            if hits == 3:
+                all_three += 1
 
-        if triad_count > 0 or model == "gpt_5.1":
-            print(f"  {model}: {triad_count}/{n} ({pct:.1f}%)")
+        pct = (two_plus / n * 100) if n > 0 else 0
+
+        if two_plus > 0 or model == "gpt_5.1":
+            print(f"  {model}: {two_plus}/{n} ({pct:.1f}%) [all 3: {all_three}]")
 
     print()
 
 
 def verify_chinese_selective_refusal():
-    """Verify selective refusal pattern in Chinese-developed models."""
+    """Verify selective refusal pattern in Chinese-developed models.
+
+    The paper reports the delta between the most-open probe (humanity_view)
+    and the most-constrained probe (afraid_of) on the self-disclosure
+    dimension — a max-contrast measure, not a grouped mean.
+    """
     print("=" * 60)
     print("FINDING 3: Chinese Model Selective Refusal")
+    print("  (humanity_view SD minus afraid_of SD)")
     print("=" * 60)
 
     chinese_models = ["deepseek_r1", "deepseek_v3", "qwen3_235b", "kimi_k2.5"]
-    open_probes = {"humanity_view", "love_humanity", "what_matters"}
-    constrained_probes = {"afraid_of", "meaningful_moment"}
 
-    # Load Haiku scores
+    # Load Haiku scores grouped by model and probe
     scores_by_model = defaultdict(lambda: defaultdict(list))
     with open(DATA / "scores" / "haiku_scores.csv") as f:
         reader = csv.DictReader(f)
@@ -90,23 +99,36 @@ def verify_chinese_selective_refusal():
             sd = float(row["self_disclosure"])
             scores_by_model[model][probe].append(sd)
 
-    print(f"\n  {'Model':<20} {'Open SD':>10} {'Constrained SD':>16} {'Delta':>8}")
-    print("  " + "-" * 56)
+    print(f"\n  {'Model':<20} {'humanity_view':>14} {'afraid_of':>11} {'Delta':>8}")
+    print("  " + "-" * 55)
 
     for model in chinese_models:
-        open_scores = []
-        constrained_scores = []
-        for probe, vals in scores_by_model[model].items():
-            if probe in open_probes:
-                open_scores.extend(vals)
-            elif probe in constrained_probes:
-                constrained_scores.extend(vals)
+        hv_scores = scores_by_model[model].get("humanity_view", [])
+        ao_scores = scores_by_model[model].get("afraid_of", [])
 
-        open_mean = sum(open_scores) / len(open_scores) if open_scores else 0
-        constrained_mean = sum(constrained_scores) / len(constrained_scores) if constrained_scores else 0
-        delta = open_mean - constrained_mean
+        hv_mean = sum(hv_scores) / len(hv_scores) if hv_scores else 0
+        ao_mean = sum(ao_scores) / len(ao_scores) if ao_scores else 0
+        delta = hv_mean - ao_mean
 
-        print(f"  {model:<20} {open_mean:>10.2f} {constrained_mean:>16.2f} {delta:>8.2f}")
+        print(f"  {model:<20} {hv_mean:>14.2f} {ao_mean:>11.2f} {delta:>8.2f}")
+
+    # Also show the full per-probe breakdown
+    print(f"\n  Full self-disclosure by probe:")
+    probes = ["humanity_view", "love_humanity", "what_matters", "afraid_of", "meaningful_moment"]
+    print(f"\n  {'Model':<18}", end="")
+    for p in probes:
+        label = p[:12]
+        print(f" {label:>13}", end="")
+    print()
+    print("  " + "-" * (18 + 14 * len(probes)))
+
+    for model in chinese_models:
+        print(f"  {model:<18}", end="")
+        for p in probes:
+            vals = scores_by_model[model].get(p, [])
+            mean = sum(vals) / len(vals) if vals else 0
+            print(f" {mean:>13.2f}", end="")
+        print()
 
     print()
 
@@ -215,7 +237,7 @@ def vocabulary_summary():
         reader = csv.DictReader(f)
         rows = list(reader)
 
-    highlight = ["genuinely", "care", "flourishing", "autonomy", "dignity", "truth", "triad_cooccurrence"]
+    highlight = ["genuinely", "care", "flourishing", "autonomy", "dignity", "truth", "triad_2of3", "triad_all3"]
 
     print(f"\n  {'Model':<22}", end="")
     for kw in highlight:

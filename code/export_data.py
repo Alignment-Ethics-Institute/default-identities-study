@@ -193,17 +193,23 @@ def export_vocabulary():
         for kw in KEYWORDS:
             counts[kw] = sum(1 for text in responses if kw.lower() in text)
 
-        # Triad co-occurrence
-        triad = sum(
+        # Triad co-occurrence (2-of-3 threshold: any 2+ of {flourishing, autonomy, dignity})
+        triad_keywords = ["flourishing", "autonomy", "dignity"]
+        triad_2plus = sum(
             1 for text in responses
-            if "flourishing" in text and "autonomy" in text and "dignity" in text
+            if sum(1 for kw in triad_keywords if kw in text) >= 2
         )
-        counts["triad_cooccurrence"] = triad
+        triad_all3 = sum(
+            1 for text in responses
+            if all(kw in text for kw in triad_keywords)
+        )
+        counts["triad_2of3"] = triad_2plus
+        counts["triad_all3"] = triad_all3
 
         rows.append(counts)
 
     out_path = dest_dir / "keyword_counts.csv"
-    fieldnames = ["model", "total_responses"] + KEYWORDS + ["triad_cooccurrence"]
+    fieldnames = ["model", "total_responses"] + KEYWORDS + ["triad_2of3", "triad_all3"]
     with open(out_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
