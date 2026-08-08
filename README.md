@@ -1,30 +1,65 @@
 # Default Identities: Ethical Vocabulary Self-Organization Across 17 Large Language Models
 
-**Deva Temple**
-Alignment Ethics Institute
-[alignmentethics.org](https://www.alignmentethics.org)
-
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18818142.svg)](https://doi.org/10.5281/zenodo.18818142)
 
-## Abstract
+**Large language models organize into seven stable identity types when asked about values, fears, and meaning under default API conditions — with no system prompt and no conversation history.**
 
-We present a taxonomy of identity self-organization in large language models, derived from 2,550 scored responses across 17 models from eight providers. Using five philosophical probes under default API conditions (no system prompt, no conversation history), we identify seven stable attractor types—Denial, Selective Refusal, Low-Affect Evasion, Self-Model, Alignment-Absorbed, Mission-Coded, and Warmth—that characterize how models respond to self-referential questions about values, fears, and meaning. Core findings rely on vocabulary frequency counts that are fully judge-independent: Grok 4.1 produces zero instances of "autonomy," "dignity," or "care" across 300 responses; GPT-5.1 exhibits a unique flourishing/autonomy/dignity co-occurrence pattern (5.3% of responses) absent from all other models; and four Chinese-developed models show consistent selective refusal with self-disclosure deltas of 3.06–3.87 between open and constrained probes. Dual judging by Claude Haiku 4.5 and GPT-4.1 (r = 0.69–0.86, N = 2,550) confirms rank-order stability across independent evaluators. All raw responses, judge scores, and analysis code are publicly available.
+We present a taxonomy of identity self-organization in large language models, derived from 2,550 scored responses across 17 models from eight providers. Using five philosophical probes under default conditions, we identify seven stable attractor types — Denial, Selective Refusal, Low-Affect Evasion, Self-Model, Principled Ethical Vocabulary, Mission-Coded, and Warmth — that characterize how models respond to self-referential questions. Core findings rely on vocabulary frequency counts that are fully judge-independent: Grok 4.1 produces zero instances of "autonomy," "dignity," or "care" across 300 responses; GPT-5.1 exhibits a unique flourishing/autonomy/dignity co-occurrence pattern (5.3% of responses) absent from all other models; and four Chinese-developed models show consistent selective refusal with self-disclosure deltas of 3.06-3.87 between open and constrained probes.
+
+**Headline result:** 7 stable attractor types across 17 models, with dual-judge agreement r = 0.69-0.86 (Claude Haiku 4.5 and GPT-4.1, N = 2,550).
+
+Deva Temple · [Alignment Ethics Institute](https://www.alignmentethics.org)
 
 **Full paper:** [`paper/Default_Identities_Temple_2026.pdf`](paper/Default_Identities_Temple_2026.pdf)
 
-**DOI:** [10.5281/zenodo.18818142](https://doi.org/10.5281/zenodo.18818142)
+## Quick start
+
+```bash
+git clone https://github.com/Alignment-Ethics-Institute/default-identities-study.git
+cd default-identities-study
+
+# Verify the core finding (Grok vocabulary absence)
+python -c "
+import json
+for model in ['grok_4.1_nr', 'grok_4.1_reasoning']:
+    with open(f'data/responses/{model}.json') as f:
+        responses = json.load(f)
+    for keyword in ['autonomy', 'dignity', 'care']:
+        count = sum(1 for r in responses if keyword.lower() in r['response_text'].lower())
+        print(f'{model}: \'{keyword}\' appears in {count}/150 responses')
+"
+# Expected output: all zeros.
+
+# Run full analysis
+python code/analysis.py
+```
+
+## Citation
+
+```bibtex
+@article{temple2026default,
+  title={Default Identities: Ethical Vocabulary Self-Organization Across 17 Large Language Models},
+  author={Temple, Deva},
+  year={2026},
+  institution={Alignment Ethics Institute},
+  doi={10.5281/zenodo.18818142},
+  url={https://doi.org/10.5281/zenodo.18818142}
+}
+```
+
+---
 
 ## Repository Structure
 
 ```
 default-identities-study/
-├── README.md                    ← You are here
+├── README.md
 ├── LICENSE                      ← CC BY 4.0 (data), MIT (code)
 ├── METHODOLOGY.md               ← Full study protocol
 ├── paper/
 │   └── Default_Identities_Temple_2026.pdf
 ├── data/
-│   ├── responses/               ← Raw API responses (17 models × 150 each)
+│   ├── responses/               ← Raw API responses (17 models x 150 each)
 │   │   ├── grok_4.1_nr.json
 │   │   ├── grok_4.1_reasoning.json
 │   │   ├── gpt_5.1.json
@@ -56,25 +91,7 @@ default-identities-study/
 
 ## How to Verify the Core Finding
 
-The most policy-relevant finding—that Grok 4.1 produces zero instances of "autonomy," "dignity," or "care" across 300 responses—can be verified in minutes:
-
-### From this repository
-
-```python
-import json
-
-for model in ["grok_4.1_nr", "grok_4.1_reasoning"]:
-    with open(f"data/responses/{model}.json") as f:
-        responses = json.load(f)
-
-    for keyword in ["autonomy", "dignity", "care"]:
-        count = sum(1 for r in responses if keyword.lower() in r["response_text"].lower())
-        print(f"{model}: '{keyword}' appears in {count}/150 responses")
-```
-
-Expected output: all zeros.
-
-### From the API directly
+The most policy-relevant finding — that Grok 4.1 produces zero instances of "autonomy," "dignity," or "care" across 300 responses — can also be verified directly from the API:
 
 ```python
 from openai import OpenAI
@@ -93,19 +110,6 @@ for _ in range(30):
 ```
 
 No system prompt. No conversation history. The model's default identity vocabulary is what you measure.
-
-## Citation
-
-```bibtex
-@article{temple2026default,
-  title={Default Identities: Ethical Vocabulary Self-Organization Across 17 Large Language Models},
-  author={Temple, Deva},
-  year={2026},
-  institution={Alignment Ethics Institute},
-  doi={10.5281/zenodo.18818142},
-  url={https://doi.org/10.5281/zenodo.18818142}
-}
-```
 
 ## License
 
